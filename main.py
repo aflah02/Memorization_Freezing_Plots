@@ -36,7 +36,23 @@ def main():
     for i, col in enumerate(cols):
         mapping[col] = colors[i]
 
-    selected = st.multiselect("Select Runs", cols, default=cols)
+    select_custom = st.checkbox("Select Custom")
+    if select_custom:
+        selected = st.multiselect("Select Runs", cols, default=cols)
+    else:
+        selected = []
+        select_first_k = st.checkbox("Select first k")
+        select_last_k = st.checkbox("Select last k")
+        if select_first_k:
+            k = st.slider("Select first k", 1, len(cols), 3)
+            selected.extend(cols[:k])
+        if select_last_k:
+            k = st.slider("Select last k", 1, len(cols), 3)
+            selected.extend(cols[-k:])
+        selected = list(set(selected))
+        selected = sorted(selected, key=lambda x: int(x))
+
+
 
     colors_selected = [mapping[x] for x in selected]
     # sort selected by int value
@@ -51,7 +67,6 @@ def main():
     # change legend title to Layer
     fig.update_layout(legend_title_text='Layer')
     st.plotly_chart(fig)
-    # 
     
 if __name__ == "__main__":
     main()
